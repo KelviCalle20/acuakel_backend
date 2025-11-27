@@ -1,3 +1,4 @@
+// UserController.ts
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
 
@@ -57,7 +58,7 @@ export class UserController {
       const user = await userService.changeStatus(
         Number(id),
         estado,
-        usuarioActualizacion ?? 1 // Por defecto admin 1 si no se envía
+        usuarioActualizacion ?? { id: 1 } // Por defecto admin 1 si no se envía
       );
       res.json({
         message: `Usuario ${estado ? "activado" : "desactivado"} correctamente`,
@@ -80,5 +81,6 @@ export class UserController {
     }
   }
 }
+
 
 

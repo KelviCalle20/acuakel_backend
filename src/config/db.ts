@@ -1,8 +1,13 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import dotenv from "dotenv";
-import { Usuario } from "../aplication/usuarios/entities/user.entity";
+import { Usuario } from "../application/usuarios/entities/user.entity";
+import { Categoria } from "../application/tienda/entities/categoria.entity";
+import { Producto } from "../application/tienda/entities/producto.entity";
+import { Carrito } from "../application/carrito/entities/carrito.entity";
+import { DetalleCarrito } from "../application/carrito/entities/detalleCarrito.entity";
 // importa otras entidades según sea necesario
+
 
 dotenv.config();
 
@@ -13,7 +18,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [Usuario], // agrega todas tus entidades aquí
+  entities: [Usuario, Categoria, Producto, Carrito, DetalleCarrito], // agrega todas tus entidades aquí
   synchronize: false, // si ya tienes tablas creadas, NO pongas true
   logging: false,
 });

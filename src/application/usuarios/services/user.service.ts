@@ -1,8 +1,9 @@
+// UserService.ts
 import bcrypt from "bcrypt";
 import { Usuario } from "../entities/user.entity";
 import { UserRepository } from "../repositories/user.repository";
 
-const INITIAL_ADMIN_ID = 1; // para actualizar usuarioActualizacion
+const INITIAL_ADMIN_ID = 1;
 
 export class UserService {
   private repo = new UserRepository();
@@ -20,15 +21,12 @@ export class UserService {
       apellido_materno: user.apellido_materno,
       correo: user.correo,
       contrasena: hashedPassword,
-      rol: user.rol ?? "cliente",
       estado: true,
       usuarioCreacion: user.usuarioCreacion ?? { id: INITIAL_ADMIN_ID } as Usuario,
       usuarioActualizacion: null,
     });
 
-
     return await this.repo.save(newUser);
-
   }
 
   async login(correo: string, contrasena: string) {
@@ -38,7 +36,7 @@ export class UserService {
     const isValid = await bcrypt.compare(contrasena, user.contrasena);
     if (!isValid) throw new Error("Contraseña incorrecta");
 
-    return { id: user.id, nombre: user.nombre, correo: user.correo, rol: user.rol };
+    return { id: user.id, nombre: user.nombre, correo: user.correo };
   }
 
   async update(id: number, user: Partial<Usuario>) {
@@ -57,3 +55,4 @@ export class UserService {
     return this.repo.delete(id);
   }
 }
+

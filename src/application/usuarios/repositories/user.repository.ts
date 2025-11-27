@@ -1,3 +1,4 @@
+// UserRepository.ts
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../../config/db";
 import { Usuario } from "../entities/user.entity";
@@ -10,7 +11,10 @@ export class UserRepository {
   }
 
   findAll() {
-    return this.repo.find({ order: { id: "ASC" } });
+    return this.repo.find({
+      order: { id: "ASC" },
+      relations: ["usuarioCreacion", "usuarioActualizacion"], // opcional, info de quien creó/actualizó
+    });
   }
 
   findByCorreo(correo: string) {
