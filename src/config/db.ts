@@ -6,6 +6,9 @@ import { Categoria } from "../application/tienda/entities/categoria.entity";
 import { Producto } from "../application/tienda/entities/producto.entity";
 import { Carrito } from "../application/carrito/entities/carrito.entity";
 import { DetalleCarrito } from "../application/carrito/entities/detalleCarrito.entity";
+import { Pedido } from "../application/pedidos/entities/pedido.entity";
+import { DetallePedido } from "../application/pedidos/entities/detalle_pedido.entity";
+import { EstadoPedido } from "../application/pedidos/entities/estado_pedido.entity";
 // importa otras entidades según sea necesario
 
 
@@ -18,7 +21,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [Usuario, Categoria, Producto, Carrito, DetalleCarrito], // agrega todas tus entidades aquí
+  entities: [Usuario, Categoria, Producto, Carrito, DetalleCarrito, Pedido, DetallePedido, EstadoPedido,], // agrega todas tus entidades aquí
   synchronize: false, // si ya tienes tablas creadas, NO pongas true
   logging: false,
 });
