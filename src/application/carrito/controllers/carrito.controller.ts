@@ -4,43 +4,59 @@ import { CarritoService } from "../services/carrito.service";
 export class CarritoController {
   constructor(private carritoService: CarritoService) {}
 
-  agregarProducto = async (req: Request, res: Response) => {
-    const { usuario_id, producto_id, cantidad } = req.body;
+  // AGREGAR PRODUCTO (id del usuario sale del JWT)
+  agregarProducto = async (req: any, res: Response) => {
     try {
-      const detalle = await this.carritoService.agregarProducto(usuario_id, producto_id, cantidad);
-      res.status(200).json({ message: "Producto agregado correctamente", detalle });
+      const usuarioId = req.user.id; // ✅ DEL JWT
+      const { producto_id, cantidad } = req.body;
+
+      const detalle = await this.carritoService.agregarProducto(
+        usuarioId,
+        producto_id,
+        cantidad
+      );
+
+      res.status(200).json({
+        message: "Producto agregado correctamente",
+        detalle,
+      });
     } catch (err: any) {
       res.status(400).json({ message: err.message });
     }
-  }
+  };
 
-  obtenerCarrito = async (req: Request, res: Response) => {
-    const usuarioId = parseInt(req.params.usuario_id);
+  // OBTENER CARRITO DEL CLIENTE LOGUEADO
+  obtenerCarrito = async (req: any, res: Response) => {
     try {
+      const usuarioId = req.user.id; // ✅ DEL JWT
       const carrito = await this.carritoService.obtenerCarrito(usuarioId);
       res.json(carrito);
     } catch (err: any) {
       res.status(500).json({ message: err.message });
     }
-  }
+  };
 
+  // ELIMINAR PRODUCTO DEL CARRITO
   eliminarProducto = async (req: Request, res: Response) => {
-    const detalleId = parseInt(req.params.detalle_id);
     try {
+      const detalleId = parseInt(req.params.detalle_id);
       await this.carritoService.eliminarProducto(detalleId);
+
       res.json({ message: "Producto eliminado correctamente." });
     } catch (err: any) {
       res.status(400).json({ message: err.message });
     }
-  }
+  };
 
-  vaciarCarrito = async (req: Request, res: Response) => {
-    const usuarioId = parseInt(req.params.usuario_id);
+  // VACIAR CARRITO DEL CLIENTE LOGUEADO
+  vaciarCarrito = async (req: any, res: Response) => {
     try {
+      const usuarioId = req.user.id; // ✅ DEL JWT
       await this.carritoService.vaciarCarrito(usuarioId);
+
       res.json({ message: "Carrito vaciado correctamente." });
     } catch (err: any) {
       res.status(500).json({ message: err.message });
     }
-  }
+  };
 }

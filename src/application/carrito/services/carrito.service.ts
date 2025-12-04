@@ -31,11 +31,16 @@ export class CarritoService {
     }));
   }
 
+  // AGREGA PRODUCTO Y DESCUENTA STOCK
   async agregarProducto(usuarioId: number, productoId: number, cantidad: number) {
-    if (!usuarioId || !productoId || !cantidad) throw new Error("Faltan datos.");
+    if (!usuarioId || !productoId || !cantidad) {
+      throw new Error("Faltan datos.");
+    }
 
-    const producto = await this.productoRepo.findOne({ where: { id: productoId, estado: true } });
-    if (!producto) throw new Error("Producto no encontrado o inactivo.");
+    const producto = await this.productoRepo.findOne({
+      where: { id: productoId, estado: true }
+    });
+    if (!producto) throw new Error("Producto no encontrado.");
     if (producto.stock < cantidad) throw new Error("Stock insuficiente.");
 
     let carrito = await this.carritoRepo.findOne({
@@ -44,16 +49,25 @@ export class CarritoService {
     });
 
     if (!carrito) {
-      carrito = this.carritoRepo.create({ usuario: { id: usuarioId } as Usuario, usuarioCreacion: { id: usuarioId } as Usuario, usuarioActualizacion: { id: usuarioId } as Usuario });
+      carrito = this.carritoRepo.create({
+        usuario: { id: usuarioId } as Usuario,
+        usuarioCreacion: { id: usuarioId } as Usuario,
+        usuarioActualizacion: { id: usuarioId } as Usuario
+      });
       await this.carritoRepo.save(carrito);
     }
 
-    let detalle = await this.detalleRepo.findOne({ where: { carrito: { id: carrito.id }, producto: { id: productoId } } });
+    let detalle = await this.detalleRepo.findOne({
+      where: {
+        carrito: { id: carrito.id },
+        producto: { id: productoId }
+      },
+      relations: ["producto"]
+    });
 
     if (detalle) {
-      const nuevaCantidad = detalle.cantidad + cantidad;
-      if (nuevaCantidad > producto.stock) throw new Error("No hay suficiente stock disponible.");
-      detalle.cantidad = nuevaCantidad;
+      // Solo sumas cantidad y descuentas SOLO lo agregado
+      detalle.cantidad += cantidad;
       detalle.usuarioActualizacion = { id: usuarioId } as Usuario;
       await this.detalleRepo.save(detalle);
     } else {
@@ -67,6 +81,7 @@ export class CarritoService {
       await this.detalleRepo.save(detalle);
     }
 
+    // DESCUENTO REAL AL STOCK (SOLO LO AGREGADO)
     producto.stock -= cantidad;
     await this.productoRepo.save(producto);
 
@@ -92,10 +107,15 @@ export class CarritoService {
     }));
   }
 
+  // AL ELIMINAR SE DEVUELVE STOCK
   async eliminarProducto(detalleId: number) {
-    const detalle = await this.detalleRepo.findOne({ where: { id: detalleId }, relations: ["producto"] });
+    const detalle = await this.detalleRepo.findOne({
+      where: { id: detalleId },
+      relations: ["producto"]
+    });
     if (!detalle) throw new Error("Detalle no encontrado.");
 
+    //DEVOLVER STOCK
     detalle.producto.stock += detalle.cantidad;
     await this.productoRepo.save(detalle.producto);
 
@@ -103,8 +123,13 @@ export class CarritoService {
     return true;
   }
 
+  // AL VACIAR CARRITO SE DEVUELVE TODO EL STOCK
   async vaciarCarrito(usuarioId: number) {
-    const carrito = await this.carritoRepo.findOne({ where: { usuario: { id: usuarioId }, estado: true }, relations: ["detalles", "detalles.producto"] });
+    const carrito = await this.carritoRepo.findOne({
+      where: { usuario: { id: usuarioId }, estado: true },
+      relations: ["detalles", "detalles.producto"]
+    });
+
     if (!carrito) return false;
 
     for (const detalle of carrito.detalles) {
@@ -116,3 +141,4 @@ export class CarritoService {
     return true;
   }
 }
+

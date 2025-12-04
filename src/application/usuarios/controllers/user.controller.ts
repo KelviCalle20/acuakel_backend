@@ -8,17 +8,34 @@ export class UserController {
   async getAll(_req: Request, res: Response) {
     try {
       const users = await userService.getAllUsers();
-      res.json(users);
+      const usersWithRoles = users.map(u => ({
+        ...u,
+        rol: u.roles?.map(r => r.rol.nombre).join(", ") || ""  // convierte array de roles en string
+      }));
+      res.json(usersWithRoles);
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Error al obtener usuarios" });
     }
   }
 
+
   async register(req: Request, res: Response) {
     try {
       const newUser = await userService.register(req.body);
-      res.status(201).json({ message: "Usuario registrado", user: newUser });
+
+      // Solo enviamos lo necesario
+      const safeUser = {
+        id: newUser.id,
+        nombre: newUser.nombre,
+        apellido_paterno: newUser.apellido_paterno,
+        apellido_materno: newUser.apellido_materno,
+        correo: newUser.correo,
+        estado: newUser.estado,
+        rol: newUser.roles?.map(r => r.rol.nombre) || [],
+      };
+
+      res.status(201).json({ message: "Usuario registrado", user: safeUser });
     } catch (err: any) {
       console.error(err);
       if (err.code === "23505") {
@@ -28,6 +45,7 @@ export class UserController {
       }
     }
   }
+
 
   async login(req: Request, res: Response) {
     const { correo, contrasena } = req.body;
@@ -81,6 +99,3 @@ export class UserController {
     }
   }
 }
-
-
-

@@ -5,37 +5,23 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  JoinColumn,
-  OneToMany
+  JoinColumn
 } from "typeorm";
+import { Usuario } from "./user.entity";
+import { Role } from "../entities/role.entity";
 
-import { RoleUser } from "./role_user.entity";
-
-@Entity({ name: "usuarios" })
-export class Usuario {
-  [x: string]: any;
+@Entity({ name: "roles_usuarios" })
+export class RoleUser {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: "varchar", length: 50 })
-  nombre!: string;
+  @ManyToOne(() => Usuario, usuario => usuario.roles, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "usuario_id" })
+  usuario!: Usuario;
 
-  @Column({ type: "varchar", length: 50 })
-  apellido_paterno!: string;
-
-  @Column({ type: "varchar", length: 50 })
-  apellido_materno!: string;
-
-  @Column({ type: "varchar", length: 100, unique: true })
-  correo!: string;
-
-  @Column({ type: "text" })
-  contrasena!: string;
-
-  @OneToMany(() => RoleUser, roleUser => roleUser.usuario)
-  roles!: RoleUser[];
-
-
+  @ManyToOne(() => Role, role => role.rolesUsuarios, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "rol_id" })
+  rol!: Role;
 
   @Column({ type: "boolean", default: true })
   estado!: boolean;

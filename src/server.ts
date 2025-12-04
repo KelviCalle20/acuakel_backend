@@ -3,11 +3,17 @@ import path from "path";
 import cors from "cors";
 import dotenv from "dotenv";
 import userRoutes from "./application/usuarios/routes/user.routes";
+ import roleRoutes from "./application/usuarios/routes/role.routes";
+ import roleUserRoutes from "./application/usuarios/routes/role_user.routes";
 import productRoutes from "./application/tienda/routes/producto.routes";
 import categoryRoutes from "./application/tienda/routes/categoria.routes";
 import cartRoutes from "./application/carrito/routes/carrito.routes";
 import pedidoRoutes from "./application/pedidos/routes/pedido.routes";
-import { AppDataSource } from "./config/db"; // importa tu DataSource
+import estadisticasRoutes from "./application/estadisticas/routes/estadistica.routes";
+import { AppDataSource } from "./config/db";
+import authRoutes from './application/auth/routes/auth.routes';
+
+
 
 dotenv.config();
 
@@ -32,17 +38,21 @@ app.get("/api/media", (req, res) => {
   });
 });
 
+
 // Función para iniciar servidor solo después de conectar a DB
 AppDataSource.initialize()
   .then(() => {
-
-
     // Rutas
     app.use("/api/users", userRoutes);
     app.use("/api/products", productRoutes);
     app.use("/api/categories", categoryRoutes);
     app.use("/api/carrito", cartRoutes);
     app.use("/api/pedidos", pedidoRoutes);
+    app.use("/api/estadisticas", estadisticasRoutes);
+    app.use('/api/auth', authRoutes);
+    app.use("/api/roles", roleRoutes);
+    app.use("/api/role_user", roleUserRoutes);
+
 
     // Servidor
     app.listen(PORT, () => {

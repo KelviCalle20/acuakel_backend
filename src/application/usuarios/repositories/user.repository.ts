@@ -10,16 +10,33 @@ export class UserRepository {
     this.repo = AppDataSource.getRepository(Usuario);
   }
 
-  findAll() {
-    return this.repo.find({
-      order: { id: "ASC" },
-      relations: ["usuarioCreacion", "usuarioActualizacion"], // opcional, info de quien creó/actualizó
+  findById(id: number): Promise<Usuario | null> {
+    return this.repo.findOne({
+      where: { id, estado: true },
+      relations: ["roles", "roles.rol"], // relaciones si usas roles
     });
   }
 
-  findByCorreo(correo: string) {
-    return this.repo.findOne({ where: { correo } });
+  findAll() {
+    return this.repo.find({
+      order: { id: "ASC" },
+      relations: [
+        "usuarioCreacion",
+        "usuarioActualizacion",
+        "roles",
+        "roles.rol",
+      ],
+    });
   }
+
+
+  findByCorreo(correo: string) {
+    return this.repo.findOne({
+      where: { correo },
+      relations: ["roles", "roles.rol", "usuarioCreacion", "usuarioActualizacion"],
+    });
+  }
+
 
   create(user: Partial<Usuario>) {
     return this.repo.create(user);
@@ -41,4 +58,3 @@ export class UserRepository {
     return this.repo.delete(id);
   }
 }
-

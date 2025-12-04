@@ -2,19 +2,65 @@ import { Router } from "express";
 import { CarritoController } from "../controllers/carrito.controller";
 import { CarritoService } from "../services/carrito.service";
 import { AppDataSource } from "../../../config/db";
+import { authenticateJWT, checkRole } from "../../auth/middleware/auth.middleware";
 
 const carritoService = new CarritoService(AppDataSource);
 const carritoController = new CarritoController(carritoService);
 
 const router = Router();
-router.get("/", async (req, res) => {
-  const carritos = await carritoService.obtenerTodosLosCarritos(); // función nueva en el service
-  res.json(carritos);
-});
 
-router.post("/add", carritoController.agregarProducto);
-router.get("/:usuario_id", carritoController.obtenerCarrito);
-router.delete("/remove/:detalle_id", carritoController.eliminarProducto);
-router.delete("/clear/:usuario_id", carritoController.vaciarCarrito);
+/**
+ * ADMIN: ver todos los carritos
+ */
+router.get(
+  "/admin",
+  authenticateJWT,
+  checkRole("Administrador"),
+  async (_req, res) => {
+    const carritos = await carritoService.obtenerTodosLosCarritos();
+    res.json(carritos);
+  }
+);
+
+/**
+ * CLIENTE: ver SU carrito (ID sale del JWT)
+ */
+router.get(
+  "/",
+  authenticateJWT,
+  checkRole("Cliente"),
+  carritoController.obtenerCarrito.bind(carritoController)
+);
+
+/**
+ * CLIENTE: agregar producto
+ */
+router.post(
+  "/add",
+  authenticateJWT,
+  checkRole("Cliente"),
+  carritoController.agregarProducto.bind(carritoController)
+);
+
+/**
+ * CLIENTE: eliminar producto
+ */
+router.delete(
+  "/remove/:detalle_id",
+  authenticateJWT,
+  checkRole("Cliente"),
+  carritoController.eliminarProducto.bind(carritoController)
+);
+
+/**
+ * CLIENTE: vaciar carrito
+ */
+router.delete(
+  "/clear",
+  authenticateJWT,
+  checkRole("Cliente"),
+  carritoController.vaciarCarrito.bind(carritoController)
+);
 
 export default router;
+
