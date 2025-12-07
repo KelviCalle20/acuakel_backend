@@ -11,6 +11,7 @@ import { DetallePedido } from "../application/pedidos/entities/detalle_pedido.en
 import { EstadoPedido } from "../application/pedidos/entities/estado_pedido.entity";
 import { Role } from "../application/usuarios/entities/role.entity";
 import { RoleUser } from "../application/usuarios/entities/role_user.entity";
+import { ResetClave } from "../application/auth/entities/reset_claves.entity";
 
 
 dotenv.config();
@@ -22,7 +23,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [Usuario, Role, RoleUser, Categoria, Producto, Carrito, DetalleCarrito, Pedido, DetallePedido, EstadoPedido,], 
+  entities: [Usuario, Role, RoleUser, ResetClave, Categoria, Producto, Carrito, DetalleCarrito, Pedido, DetallePedido, EstadoPedido,], 
   synchronize: false, 
   logging: false,
 });

@@ -3,8 +3,8 @@ import path from "path";
 import cors from "cors";
 import dotenv from "dotenv";
 import userRoutes from "./application/usuarios/routes/user.routes";
- import roleRoutes from "./application/usuarios/routes/role.routes";
- import roleUserRoutes from "./application/usuarios/routes/role_user.routes";
+import roleRoutes from "./application/usuarios/routes/role.routes";
+import roleUserRoutes from "./application/usuarios/routes/role_user.routes";
 import productRoutes from "./application/tienda/routes/producto.routes";
 import categoryRoutes from "./application/tienda/routes/categoria.routes";
 import cartRoutes from "./application/carrito/routes/carrito.routes";
@@ -18,7 +18,7 @@ import authRoutes from './application/auth/routes/auth.routes';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = Number(process.env.PORT) || 4000;
 
 const mediaPath = process.env.MEDIA_PATH;
 
@@ -32,11 +32,15 @@ app.use(express.json());
 app.use("/media", express.static(path.resolve(mediaPath)));
 
 app.get("/api/media", (req, res) => {
+  const protocol = req.protocol;
+  const host = req.get("host"); 
+
   res.json({
-    video: `http://localhost:${PORT}/media/bettas.mp4`,
-    audio: `http://localhost:${PORT}/media/AcuaKel.mp3`,
+    video: `${protocol}://${host}/media/bettas.mp4`,
+    audio: `${protocol}://${host}/media/AcuaKel.mp3`,
   });
 });
+
 
 
 // Función para iniciar servidor solo después de conectar a DB
@@ -55,9 +59,11 @@ AppDataSource.initialize()
 
 
     // Servidor
-    app.listen(PORT, () => {
-      console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
     });
+
+
   })
   .catch((err) => {
     console.error("Error al conectar con TypeORM:", err);

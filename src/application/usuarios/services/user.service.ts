@@ -18,7 +18,7 @@ export class UserService {
   async register(user: Partial<Usuario>): Promise<Usuario> {
     const hashedPassword = await bcrypt.hash(user.contrasena!, 10);
 
-    // 1️⃣ Crear usuario
+    // Crear usuario
     const newUser = this.repo.create({
       nombre: user.nombre,
       apellido_paterno: user.apellido_paterno,
@@ -26,18 +26,18 @@ export class UserService {
       correo: user.correo,
       contrasena: hashedPassword,
       estado: true,
-      usuarioCreacion: null, // Se asignará después
+      usuarioCreacion: null, 
       usuarioActualizacion: null,
     });
 
-    // 2️⃣ Guardar usuario para generar ID
+    // Guardar usuario para generar ID
     const savedUser = await this.repo.save(newUser);
 
-    // 3️⃣ Actualizar usuarioCreacion = su propio id
+    // Actualizar usuarioCreacion = su propio id
     savedUser.usuarioCreacion = savedUser as any; // asignamos la relación con sí mismo
     await this.repo.save(savedUser);
 
-    // 4️⃣ Asignar rol Cliente automáticamente
+    // Asignar rol Cliente automáticamente
     const rolRepo = AppDataSource.getRepository(Role);
     const roleUserRepo = AppDataSource.getRepository(RoleUser);
 
@@ -49,7 +49,7 @@ export class UserService {
       userRole.usuarioCreacion = savedUser as any;
       await roleUserRepo.save(userRole);
 
-      // 5️⃣ Actualizar rol principal en usuario
+      // Actualizar rol principal en usuario
       savedUser.rol = clienteRol.nombre;
       await this.repo.save(savedUser);
     }
