@@ -177,7 +177,7 @@ Puedes probar los endpoints usando:
 Ejemplo:
 
 ```
-GET http://localhost:3000/api/users
+GET http://localhost:4000/api/users
 ```
 
 ---
