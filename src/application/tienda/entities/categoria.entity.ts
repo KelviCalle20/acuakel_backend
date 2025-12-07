@@ -23,6 +23,10 @@ export class Categoria {
   @Column({ type: "boolean", default: true })
   estado!: boolean;
 
+  // NUEVO CAMPO PARA LA IMAGEN
+  @Column({ type: "text", nullable: true })
+  imagen_url?: string;
+
   @CreateDateColumn({ type: "timestamp", name: "fechacreacion" })
   fechaCreacion!: Date;
 
@@ -37,6 +41,3 @@ export class Categoria {
   @JoinColumn({ name: "usuarioactualizacion" })
   usuarioActualizacion?: Usuario | null;
 }
-
-
-

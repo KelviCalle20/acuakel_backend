@@ -1,6 +1,7 @@
 // UserController.ts
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
+import { RegisterDto } from "../../auth/dtos/register.dto"; // Importamos el DTO
 
 const userService = new UserService();
 
@@ -10,7 +11,7 @@ export class UserController {
       const users = await userService.getAllUsers();
       const usersWithRoles = users.map(u => ({
         ...u,
-        rol: u.roles?.map(r => r.rol.nombre).join(", ") || ""  // convierte array de roles en string
+        rol: u.roles?.map(r => r.rol.nombre).join(", ") || ""
       }));
       res.json(usersWithRoles);
     } catch (err) {
@@ -19,12 +20,13 @@ export class UserController {
     }
   }
 
-
   async register(req: Request, res: Response) {
     try {
-      const newUser = await userService.register(req.body);
+      // Convertimos el body a RegisterDTO
+      const registerData: RegisterDto = req.body;
 
-      // Solo enviamos lo necesario
+      const newUser = await userService.register(registerData);
+
       const safeUser = {
         id: newUser.id,
         nombre: newUser.nombre,
@@ -45,7 +47,6 @@ export class UserController {
       }
     }
   }
-
 
   async login(req: Request, res: Response) {
     const { correo, contrasena } = req.body;

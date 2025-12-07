@@ -27,4 +27,25 @@ export class EmailService {
 
     return this.transporter.sendMail(mailOptions);
   }
+  async enviarCodigos(correo: string, codigo: string) {
+    const mailOptions = {
+      from: process.env.EMAIL_USER, // usar correo del .env
+      to: correo,
+      subject: "Cuenta de Administrador principal",
+      text: `BIENVENIDO: ${codigo}`,
+    };
+
+    return this.transporter.sendMail(mailOptions);
+  }
+
+  async sendMail(to: string, subject: string, html: string) {
+    const mailOptions = {
+      from: `"Backend AcuaKel" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      html,
+    };
+
+    return this.transporter.sendMail(mailOptions);
+  }
 }

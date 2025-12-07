@@ -14,8 +14,10 @@ backend/
 │   ├── @types
 │   ├── application
 │   ├── config
+│   ├── routes
 │   ├── app.ts
 │   └── server.ts
+├── ..env
 ├── .gitignore
 ├── package.json
 ├── package-lock.json
@@ -50,7 +52,7 @@ git --version
 ### 1️⃣ Clonar el repositorio desde GitHub
 
 ```bash
-git clone https://github.com/USUARIO/REPOSITORIO.git
+git clone https://github.com/KelviCalle20/acuakel_backend.git
 ```
 
 Luego entra a la carpeta del backend:
@@ -115,6 +117,14 @@ EMAIL_PASS=contraseña_generada_de_aplicacion
 
 # ======= MULTIMEDIA =======
 MEDIA_PATH=C:/ruta/a/tu/carpeta/media
+
+# ADMIN por defecto (misma cuenta para notificación y login)
+ADMIN_EMAIL=Tu_correo_real_existente
+ADMIN_NAME=nombre_admin
+ADMIN_APELLIDO_PATERNO=apellidoPaterno_admin
+ADMIN_APELLIDO_MATERNO=apellidoMaterno_admin
+ADMIN_PASSWORD=admin123 #cualquiera este sera para que inicies sesion como Administrador
+
 
 ```
 
@@ -290,7 +300,7 @@ synchronize: false,
 
 ## 👨‍💻 Autor
 
-Proyecto desarrollado para el sistema **AcuaKel** por Kelvin Calle.
+Proyecto desarrollado para el sistema **AcuaKel**.
 
 ---
 
@@ -311,6 +321,21 @@ Ejemplo:
 ```
 http://192.168.1.10:4000
 ```
+
+---
+
+## 🗄️ Usuario Administrador por Defecto
+
+Al iniciar el backend, se crea automáticamente un **usuario administrador** si no existe:
+
+* Correo y contraseña definidos en `.env`
+* Se crea un rol `Administrador` si no existe
+* Se asigna el rol al usuario
+* Se envía un correo de notificación con los datos de login
+
+> ⚠️ Si ya existe el administrador, **no se duplica**. Solo se crea nuevamente si se elimina.
+
+---
 
 ---
 
